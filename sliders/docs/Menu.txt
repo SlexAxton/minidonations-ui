@@ -46,7 +46,7 @@ Format: 1.5
 # --------------------------------------------------------------------------
 
 
-File: md-sliders.js  (md-sliders.js)
+File: md-sliders.js  (js/md-sliders.js)
 
 Group: Index  {
 

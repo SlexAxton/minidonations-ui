@@ -4,9 +4,11 @@
     This plugin is for distributing available percentages among
     and arbitrary amount of entities.
     
+    This plugin requires jQuery, jQuery UI, and underscore.js
+    
     There is a private <github repo at https://github.com/SlexAxton/minidonations-ui> or <e-mail me at alexsexton@gmail.com>
 */
-(function(global, doc, $){
+(function(global, doc, $, _){
   '$:nomunge'; // Used by YUI compressor.
   
   /*
@@ -30,11 +32,15 @@
       
       Returns:
       
-        The mdslider instance (for chaining).
+        this - The mdslider instance (for chaining).
     */
     init: function (options, elem) {
       // Extend our default options
       this.options = $.extend({}, this.options, options);
+      
+      // Shortcut references
+      var opts = this.options,
+          that = this;
       
       /*
         Property: elem
@@ -50,8 +56,33 @@
       */
       this.$elem = $(elem);
       
-      // Build up the dom structure
-      this.buildDom();
+      /*
+        Property: data
+        
+          The current set of slider data
+      */
+      
+      // If we have init data, and it's a string
+      if (opts.data && _(opts.data).isString()) {
+        
+        // Request the JSON at that URL
+        $.getJSON(opts.data, function(data){
+          // Override with the real data
+          that.data = data;
+          
+          // Build the dom
+          that.buildDom();
+        });
+        
+      }
+      // If we have a legit Array of slider definitions
+      else if (opts.data && _(opts.data).isArray()) {
+        // Deep copy to separate current from initial
+        this.data = $.extend(true, {}, opts.data);
+        
+        // Use it to build the dom
+        this.buildDom();
+      }
       
       // Return self, for chaining
       return this;
@@ -66,13 +97,29 @@
       namespace: 'mdslider.'
     },
     
-    buildDom: function() {
+    /*
+      Function: buildDom
       
+        This function takes whatever is in data and totally builds out the
+        sliders from scratch. It will destroy anything inside of the element
+        to begin with.
+      
+      Returns:
+      
+        this - The mdslider object for chaining.
+    */
+    buildDom: function() {
+      // Some local vars
+      var opts = this.options,
+          data = this.data;
+      
+      // Kill everything else
+      this.$elem.empty();
     }
   };
   
   /*
-    Namespace: Local Namespace
+    Namespace: Global Namespace
     
       These are functions that run in the surrounding closure.
   */
@@ -112,7 +159,7 @@
     
     Returns:
     
-      The jQuery object for chaining capability.
+      this - The jQuery object for chaining capability.
   */
   $.fn.mdslider = function(options) {
     // Break early if there's no elements
@@ -133,4 +180,4 @@
       return this;
     }
   };
-})(this, this.document, this.jQuery);
+})(this, this.document, this.jQuery, this._);

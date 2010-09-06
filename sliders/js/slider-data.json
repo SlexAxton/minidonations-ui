@@ -1,0 +1,17 @@
+[
+  {
+    "id"    : 1,
+    "name"  : "Charity 1",
+    "value" : 20
+  },
+  {
+    "id"    : 2,
+    "name"  : "Charity 2",
+    "value" : 17
+  },
+  {
+    "id"    : 4,
+    "name"  : "Charity 4",
+    "value" : 2
+  }
+]

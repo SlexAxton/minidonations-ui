@@ -12,13 +12,40 @@
 <div id="sliders-container"></div>
 
 <script src="js/jquery.min.js"></script>
+<script src="js/underscore.min.js"></script>
 <script src="js/jqueryui.min.js"></script>
 <script src="js/md-sliders.js"></script>
 <script>
 (function($){
   // On domready, instantiate our plugin on our element
   $(function(){
-    
+    $('#sliders-container').mdslider({
+      // The URL for the slider data
+      "data" : "js/slider-data.json"
+      
+      /*
+      // You could load the data, directly, but an ajax load
+      // is probably more likely
+      "data": [
+        {
+          "id"    : 1,
+          "name"  : "Charity 1",
+          "value" : 20
+        },
+        {
+          "id"    : 2,
+          "name"  : "Charity 2",
+          "value" : 17
+        },
+        {
+          "id"    : 4,
+          "name"  : "Charity 4",
+          "value" : 2
+        }
+      ]
+      */
+      
+    });
   });
 
 })(this.jQuery);
