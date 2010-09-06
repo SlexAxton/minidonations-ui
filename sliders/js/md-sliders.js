@@ -32,7 +32,7 @@
       
       Returns:
       
-        this - The mdslider instance (for chaining).
+        Object - The mdslider instance (for chaining).
     */
     init: function (options, elem) {
       // Extend our default options
@@ -94,7 +94,14 @@
         This is the default set of options for the sliders
     */
     options: {
-      namespace: 'mdslider.'
+      namespace      : "mdslider.",
+      max            : 100,
+      min            : 0,
+      sliderDefaults : {
+        "min"   : 0,
+        "max"   : 100,
+        "step"  : 1
+      }
     },
     
     /*
@@ -106,15 +113,111 @@
       
       Returns:
       
-        this - The mdslider object for chaining.
+        Object - The mdslider object for chaining.
     */
     buildDom: function() {
       // Some local vars
       var opts = this.options,
-          data = this.data;
+          data = this.data,
+          that = this;
       
       // Kill everything else
       this.$elem.empty();
+      
+      // Go through each slider and create it
+      _(data).each(function(sliderdata){
+        // Append each slider to the container
+        that.$elem.append(that.buildSliderDom(sliderdata));
+      });
+    },
+    
+    /*
+      Function: buildSliderDom
+      
+        This function is for building a single instance of a slider. It is
+        to be used in conjunction with the buildDom feature, which may invoke it
+        several times.
+      
+      Parameters:
+      
+        sliderdata - The object that defines the properties of the slider (id, name, value, etc.)
+      
+      See Also:
+      
+        <buildDom>
+      
+      Returns:
+        DOMElement - The DOM element with all correct data attachments, etc.
+    */
+    buildSliderDom: function(sliderdata) {
+      var opts = this.options,
+          that = this;
+      
+      // Return the element, but set all of it's stuff first
+      return $('<div />')
+                // Save the slider data on it
+                .data(opts.namespace + 'sliderdata', sliderdata)
+                // Set the id
+                .attr('id', 'slider-'+sliderdata.id)
+                // Call the jQuery UI slider plugin on it
+                .slider($.extend({}, opts.sliderDefaults, {
+                  
+                  // Set the value
+                  value  : sliderdata.value,
+                  
+                  // Manage the ability to slide
+                  slide  : function(event, ui) {
+                    // Stop sliding if it's not possible
+                    return that.canSetSliderTo(sliderdata, ui.value);
+                  },
+                  
+                  // Handle the change event
+                  change : function(event, ui) {
+                    // Set the new value
+                    sliderdata.value = ui.value;
+                  }
+                }));
+    },
+    
+    /*
+      Function: canSetSliderTo
+      
+        Tests the ability to move a slider to a value
+      
+      Parameters:
+      
+        sliderdata - The sliderdata object (for to know which is being updated)
+        newvalue   - The value that you are trying to test this to go to
+      
+      Returns:
+      
+        boolean - true if it is possible, false if it's not.
+    */
+    canSetSliderTo: function(sliderdata, newvalue) {
+      var total = 0,
+          opts  = this.options;
+      
+      // Go through each
+      _(this.data).each(function(slider){
+        // If it's the one we're modifying
+        if (sliderdata.id === slider.id) {
+          // Use our new value
+          total += newvalue;
+        }
+        else {
+          // Otherwise use our stored value
+          total += slider.value;
+        }
+      });
+      
+      // If we're below or equal to our max
+      if (total <= opts.max && total >= opts.min) {
+        // It's cool
+        return true;
+      }
+      
+      // It's not cool
+      return false;
     }
   };
   
