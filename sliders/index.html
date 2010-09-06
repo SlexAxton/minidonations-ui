@@ -5,11 +5,59 @@
 <title>md-sliders demo</title>
 <link href="css/md-sliders.css" rel="stylesheet" media="all" />
 <link href="css/ui-lightness/jqueryui.css" rel="stylesheet" media="all" />
+<style>
+/*
+These are specific to the demo, not the widget
+*/
+body {
+  width:600px;
+  margin:0 auto;
+  font-family:"helvetica neue", "helvetica", "verdana", "arial", sans-serif;
+}
+#controls {
+  border:1px solid #CCC;
+  padding:20px;
+  margin-top:20px;
+}
+</style>
 </head>
 <body>
 <h1>md-sliders demo</h1>
 
 <div id="sliders-container"></div>
+
+
+<div id="controls">
+  <h4>Fake Controls</h4>
+  <hr />
+  
+  <h5>Add Charity</h5>
+  <!--
+  This could easily be built with a JSON object of
+  all possibilities, I figured it was likely already
+  being rendered this way.
+  -->
+  <select id="charity-chooser">
+    <option>Choose Another Charity</option>
+    <option value="5">Charity 5</option>
+    <option value="6">Charity 6</option>
+    <option value="7">Charity 7</option>
+    <option value="8">Charity 8</option>
+    <option value="9">Charity 9</option>
+    <option value="10">Charity 10</option>
+    <option value="11">Charity 11</option>
+    <option value="12">Charity 12</option>
+    <option value="13">Charity 13</option>
+    <option value="14">Charity 14</option>
+    <option value="15">Charity 15</option>
+  </select>
+  
+  <br /><hr />
+  
+  <h5>Export</h5>
+  <textarea id="exported" rows="10" cols="30"></textarea><br />
+  <input type="button" id="export" name="export" value="Export" />
+</div>
 
 <script src="js/jquery.min.js"></script>
 <script src="js/underscore.min.js"></script>
@@ -24,7 +72,7 @@
   
   // On domready, instantiate our plugin on our element
   $(function(){
-    $('#sliders-container').mdslider({
+    var sliderContainer = $('#sliders-container').mdslider({
       // The URL for the slider data
       "data" : "js/slider-data.json"
       
@@ -50,6 +98,36 @@
       ]
       */
       
+    }),
+    
+    // Grab a handle to the actual mdslider instance
+    mymdslider = sliderContainer.data('mdslider.slider');
+    
+    // Handle adding a charity
+    $('#charity-chooser').change(function(){
+      var $this = $(this);
+      
+      // Only care if we've selected a value (ie, not the default)
+      if ($this.val()) {
+        var selected = $this.find(':selected');
+        
+        // Add the charity
+        mymdslider.addSlider({
+          id   : $this.val(),
+          name : selected.text()
+        });
+        
+        // Set it back to the default
+        $this.val('');
+        
+        // Remove the selected one from the list
+        selected.remove();
+      }
+    });
+    
+    // Handle "saving"
+    $('#export').click(function(){
+      $('#exported').text(mymdslider.toJSON());
     });
   });
 

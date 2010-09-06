@@ -218,6 +218,74 @@
     },
     
     /*
+      Function: addSlider
+      
+        This function is used when a new distribution point is added. It will add the slider
+        to the UI and fit it into the restrictions.
+      
+      Parameters:
+      
+        sliderObj - The object containing the name and id of the slider instance.
+      
+      See Also:
+      
+        <removeSlider>
+      
+      Returns:
+      
+        Object - The mdslider instance for chaining.
+    */
+    addSlider: function(sliderObj) {
+      // Add in the value
+      sliderObj.value = 0;
+      
+      // Make sure our id is a number
+      sliderObj.id = global.parseInt(sliderObj.id, 10);
+      
+      // Add the dom portion
+      this.$elem.append(this.buildSliderDom(sliderObj));
+      
+      // Add it to the data array
+      this.data.push(sliderObj);
+      
+      // Chain me.
+      return this;
+    },
+    
+    /*
+      Function: removeSlider
+      
+        This function removes the slider with the given ID from the UI and dataset
+      
+      Parameters:
+      
+        sliderId - The ID of the slider that is to be removed
+      
+      See Also:
+      
+        <addSlider>
+      
+      Returns:
+      
+        Object - The mdslider instance for chaining.
+    */
+    removeSlider: function(sliderId) {
+      var sadSlider;
+      
+      // Find the desired slider
+      _(this.data).each(function(slider){
+        if (slider.id === sliderId) {
+          sadSlider = slider;
+        }
+      });
+      
+      // Remove it
+      if (sadSlider){
+        this.data = _(this.data).without(sadSlider);
+      }
+    },
+    
+    /*
       Function: toJSON
       
         This is for exporting the data of current selections to a JSON string,
