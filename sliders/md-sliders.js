@@ -1,5 +1,5 @@
 /*
-  About: mdslider plugin
+  About: The mdslider jQuery Plugin
   
     This plugin is for distributing available percentages among
     and arbitrary amount of entities.
@@ -7,6 +7,8 @@
     There is a private <github repo at https://github.com/SlexAxton/minidonations-ui> or <e-mail me at alexsexton@gmail.com>
 */
 (function(global, doc, $){
+  '$:nomunge'; // Used by YUI compressor.
+  
   /*
     Namespace: mdslider
     
@@ -14,6 +16,7 @@
       actual ui elements.
   */
   var mdslider = {
+    
     /*
       Function: init
       
@@ -30,8 +33,41 @@
         The mdslider instance (for chaining).
     */
     init: function (options, elem) {
+      // Extend our default options
+      this.options = $.extend({}, this.options, options);
       
+      /*
+        Property: elem
+        
+          The related raw dom element that was connected to the slider object.
+      */
+      this.elem = elem;
+      
+      /*
+        Property: $elem
+        
+          The related jQuery wrapped dom element cached for speed.
+      */
+      this.$elem = $(elem);
+      
+      // Build up the dom structure
+      this.buildDom();
+      
+      // Return self, for chaining
       return this;
+    },
+    
+    /*
+      Property: options
+      
+        This is the default set of options for the sliders
+    */
+    options: {
+      namespace: 'mdslider.'
+    },
+    
+    buildDom: function() {
+      
     }
   };
   

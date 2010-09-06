@@ -54,5 +54,6 @@ Group: Index  {
    Class Index: Classes
    File Index: Files
    Function Index: Functions
+   Property Index: Properties
    }  # Group: Index
 
