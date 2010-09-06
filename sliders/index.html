@@ -74,37 +74,16 @@ body {
   $(function(){
     var sliderContainer = $('#sliders-container').mdslider({
       // The URL for the slider data
-      "data" : "js/slider-data.json"
-      
-      /*
-      // You could load the data, directly, but an ajax load
+      // You could load the data directly, but an ajax load
       // is probably more likely
-      "data": [
-        {
-          "id"    : 1,
-          "name"  : "Charity 1",
-          "value" : 20
-        },
-        {
-          "id"    : 2,
-          "name"  : "Charity 2",
-          "value" : 17
-        },
-        {
-          "id"    : 4,
-          "name"  : "Charity 4",
-          "value" : 2
-        }
-      ]
-      */
-      
+      "data" : "js/slider-data.json"
     }),
     
     // Grab a handle to the actual mdslider instance
     mymdslider = sliderContainer.data('mdslider.slider');
     
     // Handle adding a charity
-    $('#charity-chooser').change(function(){
+    var charityChooser = $('#charity-chooser').change(function(){
       var $this = $(this);
       
       // Only care if we've selected a value (ie, not the default)
@@ -123,6 +102,12 @@ body {
         // Remove the selected one from the list
         selected.remove();
       }
+    });
+    
+    // Listen for slider remove events
+    sliderContainer.bind('sliderRemove', function(event, slider){
+      // Add it back to the list of possibilities
+      charityChooser.append('<option value="'+slider.id+'">'+slider.name+'</option>');
     });
     
     // Handle "saving"

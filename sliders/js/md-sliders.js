@@ -151,7 +151,7 @@
           that = this;
       
       // Return the element, but set all of it's stuff first
-      return $('<div />')
+      var sliderElem = $('<div />')
                 // Save the slider data on it
                 .data(opts.namespace + 'sliderdata', sliderdata)
                 // Set the id
@@ -174,6 +174,12 @@
                     sliderdata.value = ui.value;
                   }
                 }));
+      
+      // Save a reference back to the object
+      sliderdata.sliderElem = sliderElem;
+      
+      // Return the dom element
+      return sliderElem;
     },
     
     /*
@@ -248,6 +254,9 @@
       // Add it to the data array
       this.data.push(sliderObj);
       
+      // Custom event this
+      this.$elem.trigger('sliderAdd', [sliderObj]);
+      
       // Chain me.
       return this;
     },
@@ -281,8 +290,18 @@
       
       // Remove it
       if (sadSlider){
+        // Send the custom event
+        this.$elem.trigger('sliderRemove', [sadSlider]);
+        
+        // Take it out of the dom
+        this.$elem.find('#slider-'+sliderId).remove();
+        
+        // Save the new state
         this.data = _(this.data).without(sadSlider);
       }
+      
+      // Chain
+      return this;
     },
     
     /*
@@ -310,6 +329,31 @@
       return global.JSON.stringify(output);
     }
   };
+  
+  /*
+    Namespace: Custom Events
+    
+      The following are custom events thrown on the object that was intialized with the mdslider plugin
+  */
+  
+  /*
+    Function: sliderAdd
+    
+      Thrown when a slider is added to the set.
+    
+    Usage:
+    
+      $('#slider-container').bind('sliderAdd', function(ev, slider){ alert(slider.name + '  was added!'); });
+  */
+  /*
+    Function: sliderRemove
+    
+      Thrown when a slider is removed from the set.
+    
+    Usage:
+    
+      $('#slider-container').bind('sliderRemove', function(ev, slider){ alert(slider.name + '  was removed!'); });
+  */
   
   /*
     Namespace: Global Namespace
