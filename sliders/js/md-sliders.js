@@ -126,6 +126,8 @@
         // Append each slider to the container
         that.$elem.append(that.buildSliderDom(sliderdata));
       });
+      
+      return this;
     },
     
     /*
