@@ -17,6 +17,11 @@
 <script src="js/md-sliders.js"></script>
 <script>
 (function($){
+  // Get json2, if we don't have native JSON support
+  if (!this.JSON || !this.JSON.stringify) {
+    $.getScript('js/json2.js');
+  }
+  
   // On domready, instantiate our plugin on our element
   $(function(){
     $('#sliders-container').mdslider({

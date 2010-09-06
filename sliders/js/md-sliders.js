@@ -4,13 +4,11 @@
     This plugin is for distributing available percentages among
     and arbitrary amount of entities.
     
-    This plugin requires jQuery, jQuery UI, and underscore.js
+    This plugin requires jQuery, jQuery UI, underscore.js and json2.js for unsupported browsers.
     
     There is a private <github repo at https://github.com/SlexAxton/minidonations-ui> or <e-mail me at alexsexton@gmail.com>
 */
 (function(global, doc, $, _){
-  '$:nomunge'; // Used by YUI compressor.
-  
   /*
     Namespace: mdslider
     
@@ -117,8 +115,7 @@
     */
     buildDom: function() {
       // Some local vars
-      var opts = this.options,
-          data = this.data,
+      var data = this.data,
           that = this;
       
       // Kill everything else
@@ -218,6 +215,31 @@
       
       // It's not cool
       return false;
+    },
+    
+    /*
+      Function: toJSON
+      
+        This is for exporting the data of current selections to a JSON string,
+        usually for sending back to the serverside to save. Note: this requires
+        the JSON.stringify method exists.
+      
+      Returns:
+        String - Valid JSON that represents the current selections.
+    */
+    toJSON: function() {
+      var output = [];
+      
+      // Just get the data we need (id and value)
+      _(this.data).each(function(slider){
+        // Push it onto the array
+        output.push({
+          id    : slider.id,
+          value : slider.value
+        });
+      });
+      
+      return global.JSON.stringify(output);
     }
   };
   
