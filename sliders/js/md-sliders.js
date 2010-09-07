@@ -6,6 +6,8 @@
     
     This plugin requires jQuery, jQuery UI, underscore.js and json2.js for unsupported browsers.
     
+    by Alex Sexton
+    
     There is a private <github repo at https://github.com/SlexAxton/minidonations-ui> or <e-mail me at alexsexton@gmail.com>
 */
 (function(global, doc, $, _){
@@ -82,6 +84,11 @@
         this.buildDom();
       }
       
+      // Manage global change
+      this.$elem.bind('change', function(ui, changedSlider){
+        $(this).find('.'+opts.totalClass).text((that.getTotal() || '0')+'%');
+      });
+      
       // Return self, for chaining
       return this;
     },
@@ -98,9 +105,11 @@
       wrapperClass   : 'sliderwrapper',
       sliderPrefix   : 'slider-',
       wrapperPrefix  : 'sliderwrapper-',
+      topBarClass    : 'mdsliderTopBar',
       headerClass    : 'sliderHeader',
       headerValClass : 'curVal',
       removeClass    : 'removeSlider',
+      totalClass     : 'slidersTotal',
       sliderDefaults : {
         "min"   : 0,
         "max"   : 100,
@@ -122,10 +131,14 @@
     buildDom: function() {
       // Some local vars
       var data = this.data,
+          opts = this.options,
           that = this;
       
       // Kill everything else
       this.$elem.empty();
+      
+      // Add the header
+      this.$elem.append('<div class="'+opts.topBarClass+'">Total: <span class="'+opts.totalClass+'">'+this.getTotal()+'%</span></div>');
       
       // Go through each slider and create it
       _(data).each(function(sliderdata){
@@ -197,6 +210,8 @@
                     sliderWrapper.find('.'+opts.headerValClass).text(ui.value + '%');
                     // set the new value
                     sliderdata.value = ui.value;
+                    // custom event for all slider change
+                    that.$elem.trigger('change', [sliderdata]);
                   }
                 }));
       
@@ -214,6 +229,26 @@
       
       // Return the dom element
       return sliderWrapper;
+    },
+    
+    /*
+      Function: getTotal
+      
+        Adds up the slider percentages and returns their sum
+      
+      Returns:
+      
+        Number - The sum of all percentages of sliders
+    */
+    getTotal: function() {
+      var total = 0;
+      
+      // Go through each
+      _(this.data).each(function(slider){
+          total += slider.value;
+      });
+      
+      return total;
     },
     
     /*
@@ -388,6 +423,15 @@
     Usage:
     
       $('#slider-container').bind('sliderRemove', function(ev, slider){ alert(slider.name + '  was removed!'); });
+  */
+  /*
+    Function: change
+    
+      Thrown when the total distribution is changed at all
+    
+    Usage:
+    
+      $('#slider-container').bind('change', function(ev, slider){ alert('we have a new distribution!'); });
   */
   
   /*
