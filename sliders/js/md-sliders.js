@@ -95,6 +95,12 @@
       namespace      : "mdslider.",
       max            : 100,
       min            : 0,
+      wrapperClass   : 'sliderwrapper',
+      sliderPrefix   : 'slider-',
+      wrapperPrefix  : 'sliderwrapper-',
+      headerClass    : 'sliderHeader',
+      headerValClass : 'curVal',
+      removeClass    : 'removeSlider',
       sliderDefaults : {
         "min"   : 0,
         "max"   : 100,
@@ -153,11 +159,20 @@
           that = this;
       
       // Return the element, but set all of it's stuff first
-      var sliderElem = $('<div />')
+      var sliderWrapper = $('<div />')
+                // Set the id
+                .attr('id', opts.wrapperPrefix+sliderdata.id)
+                .addClass(opts.wrapperClass)
+                .append('<div class="'+opts.headerClass+'">' + sliderdata.name +
+                        ' - <span class="'+opts.headerValClass+'">'+(sliderdata.value || '0')+'%</span>'+
+                        ' [<a class="'+opts.removeClass+'" href="#">x</a>]'+
+                        '</div>'),
+          
+          sliderElem = $('<div />')
                 // Save the slider data on it
                 .data(opts.namespace + 'sliderdata', sliderdata)
                 // Set the id
-                .attr('id', 'slider-'+sliderdata.id)
+                .attr('id', opts.sliderPrefix+sliderdata.id)
                 // Call the jQuery UI slider plugin on it
                 .slider($.extend({}, opts.sliderDefaults, {
                   
@@ -166,13 +181,21 @@
                   
                   // Manage the ability to slide
                   slide  : function(event, ui) {
+                    if (that.canSetSliderTo(sliderdata, ui.value)) {
+                      // update the ui
+                      sliderWrapper.find('.'+opts.headerValClass).text(ui.value + '%');
+                      return true;
+                    }
+                    
                     // Stop sliding if it's not possible
-                    return that.canSetSliderTo(sliderdata, ui.value);
+                    return false;
                   },
                   
                   // Handle the change event
                   change : function(event, ui) {
-                    // Set the new value
+                    // update the ui
+                    sliderWrapper.find('.'+opts.headerValClass).text(ui.value + '%');
+                    // set the new value
                     sliderdata.value = ui.value;
                   }
                 }));
@@ -180,8 +203,17 @@
       // Save a reference back to the object
       sliderdata.sliderElem = sliderElem;
       
+      // Put the slider in the wrapper
+      sliderWrapper.append(sliderElem);
+      
+      // Manage removal
+      sliderWrapper.find('.'+opts.removeClass).click(function(){
+        that.removeSlider(sliderdata.id);
+        return false;
+      });
+      
       // Return the dom element
-      return sliderElem;
+      return sliderWrapper;
     },
     
     /*
@@ -281,7 +313,8 @@
         Object - The mdslider instance for chaining.
     */
     removeSlider: function(sliderId) {
-      var sadSlider;
+      var sadSlider,
+          opts = this.options;
       
       // Find the desired slider
       _(this.data).each(function(slider){
@@ -296,7 +329,7 @@
         this.$elem.trigger('sliderRemove', [sadSlider]);
         
         // Take it out of the dom
-        this.$elem.find('#slider-'+sliderId).remove();
+        this.$elem.find('#'+opts.wrapperPrefix+sliderId).remove();
         
         // Save the new state
         this.data = _(this.data).without(sadSlider);
