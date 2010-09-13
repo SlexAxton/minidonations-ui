@@ -110,6 +110,7 @@
       headerValClass : 'curVal',
       removeClass    : 'removeSlider',
       totalClass     : 'slidersTotal',
+      width          : "600px",
       sliderDefaults : {
         "min"   : 0,
         "max"   : 100,
@@ -186,6 +187,7 @@
                 .data(opts.namespace + 'sliderdata', sliderdata)
                 // Set the id
                 .attr('id', opts.sliderPrefix+sliderdata.id)
+                .width(opts.width)
                 // Call the jQuery UI slider plugin on it
                 .slider($.extend({}, opts.sliderDefaults, {
                   
