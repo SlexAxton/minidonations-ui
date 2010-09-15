@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset=utf-8 />
+<title>TextArea Word Limit</title>
+<style type="text/css">
+  .limitMet {
+    border:1px solid red;
+  }
+</style>
+</head>
+<body>
+  <h1>TextArea World Limit</h1>
+  <textarea id="limitMe" rows="10" cols="30"></textarea>
+  <div>Count: <span id="count">0</span></div>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+  <script src="jquery.mdTextLimit.js"></script>
+  <script>
+    // In Use
+    $(function(){
+      var $limitedField = $('#limitMe'),
+          $counter      = $('#count');
+      
+      // Enforce limit
+      $limitedField.mdTextLimit();
+      
+      // Update counter
+      $limitedField.bind('lengthChange', function(e, len){
+        $counter.text(len);
+      });
+    });
+  </script>
+</body>
+</html>
