@@ -86,7 +86,8 @@
       
       // Manage global change
       this.$elem.bind('change', function(ui, changedSlider){
-        $(this).find('.'+opts.totalClass).text((that.getTotal() || '0')+'%');
+        var total = that.getTotal();
+        $(this).find('.'+opts.totalClass).text((total || '0')+'%');
       });
       
       // Return self, for chaining
@@ -201,7 +202,8 @@
                       sliderWrapper.find('.'+opts.headerValClass).text(ui.value + '%');
                       return true;
                     }
-                    
+                    // Force a total calculation
+                    $(this).slider('value', that.canSetSliderTo(sliderdata));
                     // Stop sliding if it's not possible
                     return false;
                   },
@@ -250,6 +252,8 @@
           total += slider.value;
       });
       
+      this.percentAvailable = this.options.max - total;
+      
       return total;
     },
     
@@ -265,24 +269,32 @@
       
       Returns:
       
-        boolean - true if it is possible, false if it's not.
+        boolean | number - true if it is possible, false if it's not.
     */
     canSetSliderTo: function(sliderdata, newvalue) {
       var total = 0,
-          opts  = this.options;
+          opts  = this.options,
+          retBool = (newvalue || newvalue === 0) ? true : false;
       
       // Go through each
       _(this.data).each(function(slider){
         // If it's the one we're modifying
         if (sliderdata.id === slider.id) {
           // Use our new value
-          total += newvalue;
+          if (retBool) {
+            total += newvalue;
+          }
         }
         else {
           // Otherwise use our stored value
           total += slider.value;
         }
       });
+      
+      // Different return types based on input... eh it's ok cause it's sooo similar
+      if (!retBool) {
+        return opts.max - total;
+      }
       
       // If we're below or equal to our max
       if (total <= opts.max && total >= opts.min) {
