@@ -6,6 +6,7 @@
   text-align:right;
   font-weight:bold;
 }
+.takenBar,
 .remainingBar {
   height:10px;
   position:absolute;
@@ -13,4 +14,11 @@
   margin-top:2.5px;
   padding:0;
   line-height:2px;
+  background-repeat:repeat-x;
+}
+.takenBar {
+  background-image:url(../img/bluebarbg.png);
+}
+.remainingBar {
+  background-image:url(../img/greenbarbg.png);
 }

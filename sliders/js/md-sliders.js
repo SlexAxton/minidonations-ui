@@ -99,6 +99,8 @@
               'left' : that.getRemainingPixelOffset($this.closest('.ui-slider').data(opts.namespace + 'sliderdata'))
             });
         });
+        
+        changedSlider.sliderElem.find('.'+opts.takenBarClass).width(changedSlider.value+'%');
       });
       
       // Return self, for chaining
@@ -124,7 +126,9 @@
       totalClass     : 'slidersTotal',
       remainingBarClass : 'remainingBar',
       remainingBarColor : '#009900',
-      width          : 600,
+      takenBarClass  : 'takenBar',
+      takenBarColor  : '#0066FF',
+      width          : 300,
       sliderDefaults : {
         "min"   : 0,
         "max"   : 100,
@@ -243,18 +247,33 @@
                         .height(10)
                         .html('&nbsp;') // ie6 hates empty divs :(
                         .css({
-                          'background-color': opts.remainingBarColor,
+                          //'background-color': opts.remainingBarColor,
                           'position'        : 'absolute',
                           'margin-top'      : '2.5px',
-                          'opacity'         : 0.3,
+                          'opacity'         : 0.7,
                           'left'            : that.getRemainingPixelOffset(sliderdata)
+                        }),
+      
+      takenBar = $('<div />')
+                        .addClass(opts.takenBarClass)
+                        .width(sliderdata.value+'%')
+                        .height(10)
+                        .html('&nbsp;') // ie6 hates empty divs :(
+                        .css({
+                          //'background-color': opts.takenBarColor,
+                          'position'        : 'absolute',
+                          'margin-top'      : '2.5px',
+                          'opacity'         : 0.7,
+                          'left'            : 0
                         });
+      
+      
       
       // Save a reference back to the object
       sliderdata.sliderElem = sliderElem;
       
       // put the remaining bar in the slider
-      sliderElem.append(remainingBar);
+      sliderElem.append(takenBar).append(remainingBar);
       
       // Put the slider in the wrapper
       sliderWrapper.append(sliderElem);
