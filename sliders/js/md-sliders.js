@@ -128,7 +128,7 @@
       remainingBarColor : '#009900',
       takenBarClass  : 'takenBar',
       takenBarColor  : '#0066FF',
-      width          : 300,
+      width          : 600,
       sliderDefaults : {
         "min"   : 0,
         "max"   : 100,
