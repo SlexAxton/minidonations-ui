@@ -261,6 +261,8 @@
       // Manage removal
       sliderWrapper.find('.'+opts.removeClass).click(function(){
         that.removeSlider(sliderdata.id);
+        sliderdata.value = 0;
+        that.$elem.trigger('change', [sliderdata]);
         return false;
       });
       
