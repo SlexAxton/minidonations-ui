@@ -86,8 +86,19 @@
       
       // Manage global change
       this.$elem.bind('change', function(ui, changedSlider){
-        var total = that.getTotal();
-        $(this).find('.'+opts.totalClass).text((total || '0')+'%');
+        var total = that.getTotal(),
+            $this = $(this);
+        $this.find('.'+opts.totalClass).text((total || '0')+'%');
+        
+        // update remainingBar
+        $this.find('.'+opts.remainingBarClass).each(function(){
+          var $this = $(this);
+          $this
+            .width(that.getRemainingPixelWidth())
+            .css({
+              'left' : that.getRemainingPixelOffset($this.closest('.ui-slider').data(opts.namespace + 'sliderdata'))
+            });
+        });
       });
       
       // Return self, for chaining
@@ -111,7 +122,9 @@
       headerValClass : 'curVal',
       removeClass    : 'removeSlider',
       totalClass     : 'slidersTotal',
-      width          : "600px",
+      remainingBarClass : 'remainingBar',
+      remainingBarColor : '#009900',
+      width          : 600,
       sliderDefaults : {
         "min"   : 0,
         "max"   : 100,
@@ -198,6 +211,10 @@
                   // Manage the ability to slide
                   slide  : function(event, ui) {
                     if (that.canSetSliderTo(sliderdata, ui.value)) {
+                      // set the new value
+                      sliderdata.value = ui.value;
+                      // custom event for all slider change
+                      that.$elem.trigger('change', [sliderdata]);
                       // update the ui
                       sliderWrapper.find('.'+opts.headerValClass).text(ui.value + '%');
                       return true;
@@ -217,10 +234,26 @@
                     // custom event for all slider change
                     that.$elem.trigger('change', [sliderdata]);
                   }
-                }));
+                })),
+      
+      
+      remainingBar = $('<div />')
+                        .addClass(opts.remainingBarClass)
+                        .width(this.getRemainingPixelWidth())
+                        .height(10)
+                        .css({
+                          'background-color': opts.remainingBarColor,
+                          'position'        : 'absolute',
+                          'margin-top'      : '2.5px',
+                          'opacity'         : 0.3,
+                          'left'            : that.getRemainingPixelOffset(sliderdata)
+                        });
       
       // Save a reference back to the object
       sliderdata.sliderElem = sliderElem;
+      
+      // put the remaining bar in the slider
+      sliderElem.append(remainingBar);
       
       // Put the slider in the wrapper
       sliderWrapper.append(sliderElem);
@@ -233,6 +266,18 @@
       
       // Return the dom element
       return sliderWrapper;
+    },
+    
+    getRemainingPixelOffset: function(slider) {
+      var opts = this.options;
+      
+      return slider.value+'%';
+    },
+    
+    getRemainingPixelWidth: function(){
+      var opts       = this.options;
+      
+      return Math.floor(opts.width*((opts.max-this.getTotal())/opts.max));
     },
     
     /*
