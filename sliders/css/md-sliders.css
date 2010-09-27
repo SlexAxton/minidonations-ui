@@ -6,3 +6,11 @@
   text-align:right;
   font-weight:bold;
 }
+.remainingBar {
+  height:10px;
+  position:absolute;
+  margin:0;
+  margin-top:2.5px;
+  padding:0;
+  line-height:2px;
+}

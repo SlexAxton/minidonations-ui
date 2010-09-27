@@ -241,6 +241,7 @@
                         .addClass(opts.remainingBarClass)
                         .width(this.getRemainingPixelWidth())
                         .height(10)
+                        .html('&nbsp;') // ie6 hates empty divs :(
                         .css({
                           'background-color': opts.remainingBarColor,
                           'position'        : 'absolute',
